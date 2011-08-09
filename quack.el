@@ -5,7 +5,7 @@
 ;; Emacs-style font-lock specs adapted from GNU Emacs 21.2 scheme.el.
 ;; Scheme Mode menu adapted from GNU Emacs 21.2 cmuscheme.el.
 
-(defconst quack-version      "0.41")
+(defconst quack-version      "0.42")
 (defconst quack-author-name  "Neil Van Dyke")
 (defconst quack-author-email "neil@neilvandyke.org")
 (defconst quack-web-page     "http://www.neilvandyke.org/quack/")
@@ -20,7 +20,7 @@ particular purpose.  See the GNU General Public License for more details.  See
 http://www.gnu.org/licenses/ for details.  For other licenses and consulting,
 please contact Neil Van Dyke.")
 
-(defconst quack-cvsid "$Id: quack.el,v 1.470 2011/06/04 08:44:43 neilpair Exp $")
+(defconst quack-cvsid "$Id: quack.el,v 1.472 2011/07/31 03:16:41 neilpair Exp $")
 
 ;;; Commentary:
 
@@ -37,14 +37,12 @@ please contact Neil Van Dyke.")
 
 ;; COMPATIBILITY:
 ;;
-;;     GNU Emacs 22 -- Yes.  Quack is now developed under GNU Emacs 22 on a
-;;     GNU/Linux system, which is the preferred platform for Quacksmokers.
-;;     Quack should work under GNU Emacs 22 on any Un*x-like OS.  Reportedly,
+;;     GNU Emacs 23 and 22 -- Yes.  Quack is now developed under GNU Emacs 23
+;;     on a GNU/Linux system, which is the preferred platform for Quacksmokers.
+;;     Quack should work under GNU Emacs 23 on any Un*x-like OS.  Reportedly,
 ;;     Quack also works with GNU Emacs 22 on Apple Mac OS X and Microsoft
 ;;     Windows (NT, 2000, XP), but the author has no means of testing on those
 ;;     platforms.
-;;
-;;     GNU Emacs 22 -- Yes.
 ;;
 ;;     GNU Emacs 21 -- Probably, but no longer tested.
 ;;
@@ -113,6 +111,9 @@ please contact Neil Van Dyke.")
 ;;     neil@neilvandyke.org to add you to the moderated `scheme-announce' list.
 
 ;; HISTORY:
+;;
+;;     Version 0.42 (2011-07-30):
+;;         * Added compile error regexp for "raco".
 ;;
 ;;     Version 0.41 (2011-06-04)
 ;;         * Added `sxml-match' to `scheme-indent-function'.
@@ -4052,6 +4053,10 @@ Can be used in your `~/.emacs' file something like this:
                      (let ((m (make-marker))) (set-marker m 0) m)
                    'quack-compile-no-line-number)))
   `(
+
+    ;; Racket 5.1.1 "raco" compile error (which can have multiple spaces):
+    ("^raco\\(?:cgc\\)?: +\\([^: ][^:]*\\):\\([0-9]+\\):\\([0-9]+\\):"
+     1 2 3)
 
     ;; PLT MzScheme 4.1.4 "=== context ===" traceback when there is only file,
     ;; line, and column info, but potentially no following ":" and additional
