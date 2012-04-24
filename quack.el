@@ -1,11 +1,11 @@
 ;;; quack.el --- enhanced support for editing and running Scheme code
 
-(defconst quack-copyright    "Copyright (C) 2002-2011 Neil Van Dyke")
+(defconst quack-copyright    "Copyright (C) 2002-2012 Neil Van Dyke")
 (defconst quack-copyright-2  "Portions Copyright (C) Free Software Foundation")
 ;; Emacs-style font-lock specs adapted from GNU Emacs 21.2 scheme.el.
 ;; Scheme Mode menu adapted from GNU Emacs 21.2 cmuscheme.el.
 
-(defconst quack-version      "0.42")
+(defconst quack-version      "0.44")
 (defconst quack-author-name  "Neil Van Dyke")
 (defconst quack-author-email "neil@neilvandyke.org")
 (defconst quack-web-page     "http://www.neilvandyke.org/quack/")
@@ -20,7 +20,7 @@ particular purpose.  See the GNU General Public License for more details.  See
 http://www.gnu.org/licenses/ for details.  For other licenses and consulting,
 please contact Neil Van Dyke.")
 
-(defconst quack-cvsid "$Id: quack.el,v 1.472 2011/07/31 03:16:41 neilpair Exp $")
+(defconst quack-cvsid "$Id: quack.el,v 1.481 2012-04-11 17:42:25 user Exp $")
 
 ;;; Commentary:
 
@@ -111,6 +111,17 @@ please contact Neil Van Dyke.")
 ;;     neil@neilvandyke.org to add you to the moderated `scheme-announce' list.
 
 ;; HISTORY:
+;;
+;;     Version 0.44 (2012-04-11):
+;;         * Added indent and fontify for `struct', `module+', `module*'.
+;;         * Changed intent for `module' from `defun' to 2.
+;;         * Added fontify for `define-syntax-class',
+;;           `define-splicing-syntax-class', `begin-for-syntax'.
+;;         * Changed `define-struct' fontify.
+;;
+;;     Version 0.43 (2011-08-23):
+;;         * Add indent and fontify for "syntax-parse".
+;;         * Added another compile error regexp for Racket backtraces.
 ;;
 ;;     Version 0.42 (2011-07-30):
 ;;         * Added compile error regexp for "raco".
@@ -775,7 +786,8 @@ This only has effect when `quack-fontify-style' is `plt'."
   ;; highlighting without regard to context is not really satisfactory.
   '(
 
-    "and" "begin" "begin0" "c-declare" "c-lambda" "case" "case-lambda" "class"
+    "and" "begin" "begin-for-syntax"
+    "begin0" "c-declare" "c-lambda" "case" "case-lambda" "class"
     "class*" "class*/names" "class100" "class100*" "compound-unit/sig" "cond"
     "cond-expand" "define" "define-class" "define-compound-unit"
     "define-const-structure"
@@ -785,7 +797,12 @@ This only has effect when `quack-fontify-style' is `plt'."
     "define-inline" "define-location" "define-macro" "define-method"
     "define-module" "define-opt" "define-public" "define-reader-ctor"
     "define-record" "define-record-printer" "define-record-type"
-    "define-signature" "define-struct" "define-structure" "define-syntax"
+    "define-signature"
+    "define-splicing-syntax-class"
+    "define-struct"
+    "define-structure"
+    "define-syntax"
+    "define-syntax-class"
     "define-syntax-set" "define-values" "define-values-for-syntax"
     "define-values/invoke-unit/infer"
     "define-values/invoke-unit/sig" "define/contract" "define/override"
@@ -796,7 +813,7 @@ This only has effect when `quack-fontify-style' is `plt'."
     "let+"
     "let-syntax" "let-values" "let/ec" "letrec" "letrec-values" "letrec-syntax"
     "match-lambda" "match-lambda*" "match-let" "match-let*" "match-letrec"
-    "match-define" "mixin" "module" "opt-lambda" "or" "override" "override*"
+    "match-define" "mixin" "module" "module*" "module+" "opt-lambda" "or" "override" "override*"
     "namespace-variable-bind/invoke-unit/sig" "parameterize" "parameterize*"
     "parameterize-break" "private"
     "private*" "protect" "provide" "provide-signature-elements"
@@ -804,7 +821,8 @@ This only has effect when `quack-fontify-style' is `plt'."
     "quasisyntax" "quasisyntax/loc" "quote" "receive"
     "rename" "require" "require-for-syntax" "send" "send*" "set!" "set!-values"
     "signature->symbols" "super-instantiate" "syntax" "syntax/loc"
-    "syntax-case" "syntax-case*" "syntax-error" "syntax-rules" "unit/sig"
+    "syntax-case" "syntax-case*" "syntax-error" "syntax-parse" "syntax-rules"
+    "unit/sig"
     "unless" "unquote" "unquote-splicing" "when" "with-handlers" "with-method"
     "with-syntax"
     "define-type-alias"
@@ -820,6 +838,7 @@ This only has effect when `quack-fontify-style' is `plt'."
     "require/typed"
     "require/opaque-type"
     "require-typed-struct"
+    "struct"
     "inst"
     "ann"
 
@@ -3199,6 +3218,9 @@ Can be used in your `~/.emacs' file something like this:
 (put 'match              'scheme-indent-function 1)
 (put 'mixin              'scheme-indent-function 2)
 (put 'module             'scheme-indent-function 'defun)
+(put 'module             'scheme-indent-function 2)
+(put 'module*            'scheme-indent-function 2)
+(put 'module+            'scheme-indent-function 1)
 (put 'opt-lambda         'scheme-indent-function 1)
 (put 'parameterize       'scheme-indent-function 1)
 (put 'parameterize*      'scheme-indent-function 1)
@@ -3207,8 +3229,10 @@ Can be used in your `~/.emacs' file something like this:
 (put 'receive            'scheme-indent-function 2)
 (put 'send*              'scheme-indent-function 1)
 (put 'sigaction          'scheme-indent-function 1)
+(put 'struct             'scheme-indent-function 1)
 (put 'sxml-match         'scheme-indent-function 1)
 (put 'syntax-case        'scheme-indent-function 2)
+(put 'syntax-parse       'scheme-indent-function 1)
 (put 'syntax/loc         'scheme-indent-function 1)
 (put 'unit               'scheme-indent-function 'defun)
 (put 'unit/sig           'scheme-indent-function 2)
@@ -3773,7 +3797,6 @@ Can be used in your `~/.emacs' file something like this:
                             "-record-printer"
                             "-record-type"
                             "-signature"
-                            "-struct"
                             "-structure"
                             "-syntax"
                             "-values"
@@ -3790,6 +3813,16 @@ Can be used in your `~/.emacs' file something like this:
               quack-pltish-class-defn-face
             quack-pltish-defn-face))
         nil t))
+
+    ;; Racket "struct" and "define-struct" forms:
+    (,(concat "[[(]"
+              "\\(?:define-\\)?"
+              "struct"
+              "\\>"
+              "[ \t]*[[(]?"
+              "\\(\\sw+\\)")
+     ;; TODO: Use a struct face rather than the class face.
+     (1 quack-pltish-class-defn-face nil t))
 
     ;; `defmacro' and related SCM forms.
     (,(concat "[[(]def"
@@ -4057,6 +4090,9 @@ Can be used in your `~/.emacs' file something like this:
     ;; Racket 5.1.1 "raco" compile error (which can have multiple spaces):
     ("^raco\\(?:cgc\\)?: +\\([^: ][^:]*\\):\\([0-9]+\\):\\([0-9]+\\):"
      1 2 3)
+
+    ;; Racket 5.1.1 entries without line number info in "=== context ===":
+    ("^\\(/[^:]+\\): \\[running body\\]$" 1 nil nil 0)
 
     ;; PLT MzScheme 4.1.4 "=== context ===" traceback when there is only file,
     ;; line, and column info, but potentially no following ":" and additional
