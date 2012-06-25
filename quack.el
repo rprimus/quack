@@ -5,7 +5,7 @@
 ;; Emacs-style font-lock specs adapted from GNU Emacs 21.2 scheme.el.
 ;; Scheme Mode menu adapted from GNU Emacs 21.2 cmuscheme.el.
 
-(defconst quack-version      "0.44")
+(defconst quack-version      "0.45")
 (defconst quack-author-name  "Neil Van Dyke")
 (defconst quack-author-email "neil@neilvandyke.org")
 (defconst quack-web-page     "http://www.neilvandyke.org/quack/")
@@ -20,7 +20,7 @@ particular purpose.  See the GNU General Public License for more details.  See
 http://www.gnu.org/licenses/ for details.  For other licenses and consulting,
 please contact Neil Van Dyke.")
 
-(defconst quack-cvsid "$Id: quack.el,v 1.481 2012-04-11 17:42:25 user Exp $")
+(defconst quack-cvsid "$Id: quack.el,v 1.487 2012-06-18 08:25:43 user Exp $")
 
 ;;; Commentary:
 
@@ -111,6 +111,10 @@ please contact Neil Van Dyke.")
 ;;     neil@neilvandyke.org to add you to the moderated `scheme-announce' list.
 
 ;; HISTORY:
+;;
+;;     Version 0.45 (2012-04-18):
+;;         * Added a bunch of indent rules for Scribble definition forms
+;;           and Racket sequence/iterator stuff, plus Overeasy `test-section'.
 ;;
 ;;     Version 0.44 (2012-04-11):
 ;;         * Added indent and fontify for `struct', `module+', `module*'.
@@ -807,7 +811,7 @@ This only has effect when `quack-fontify-style' is `plt'."
     "define-values/invoke-unit/infer"
     "define-values/invoke-unit/sig" "define/contract" "define/override"
     "define/private" "define/public" "define/kw"
-    "delay" "do" "else" "exit-handler" "field"
+    "delay" "do" "doc" "else" "exit-handler" "field"
     "if" "import" "inherit" "inherit-field" "init" "init-field" "init-rest"
     "instantiate" "interface" "lambda" "lambda/kw" "let" "let*" "let*-values"
     "let+"
@@ -3194,54 +3198,108 @@ Can be used in your `~/.emacs' file something like this:
 
 ;; Indent Properties:
 
-(put 'begin0             'scheme-indent-function 1)
-(put 'c-declare          'scheme-indent-function 0)
-(put 'c-lambda           'scheme-indent-function 2)
-(put 'case-lambda        'scheme-indent-function 0)
-(put 'catch              'scheme-indent-function 1)
-(put 'chicken-setup      'scheme-indent-function 1)
-(put 'class              'scheme-indent-function 'defun)
-(put 'class*             'scheme-indent-function 'defun)
-(put 'compound-unit/sig  'scheme-indent-function 0)
-(put 'define:            'scheme-indent-function 3)
-(put 'dynamic-wind       'scheme-indent-function 0)
-(put 'for/fold           'scheme-indent-function 2)
-(put 'instantiate        'scheme-indent-function 2)
-(put 'interface          'scheme-indent-function 1)
-(put 'lambda/kw          'scheme-indent-function 1)
-(put 'let*-values        'scheme-indent-function 1)
-(put 'let*:              'scheme-indent-function 'quack-let-colon-indent)
-(put 'let+               'scheme-indent-function 1)
-(put 'let-values         'scheme-indent-function 1)
-(put 'let/ec             'scheme-indent-function 1)
-(put 'let:               'scheme-indent-function 'quack-let-colon-indent)
-(put 'match              'scheme-indent-function 1)
-(put 'mixin              'scheme-indent-function 2)
-(put 'module             'scheme-indent-function 'defun)
-(put 'module             'scheme-indent-function 2)
-(put 'module*            'scheme-indent-function 2)
-(put 'module+            'scheme-indent-function 1)
-(put 'opt-lambda         'scheme-indent-function 1)
-(put 'parameterize       'scheme-indent-function 1)
-(put 'parameterize*      'scheme-indent-function 1)
-(put 'parameterize-break 'scheme-indent-function 1)
-(put 'quasisyntax/loc    'scheme-indent-function 1)
-(put 'receive            'scheme-indent-function 2)
-(put 'send*              'scheme-indent-function 1)
-(put 'sigaction          'scheme-indent-function 1)
-(put 'struct             'scheme-indent-function 1)
-(put 'sxml-match         'scheme-indent-function 1)
-(put 'syntax-case        'scheme-indent-function 2)
-(put 'syntax-parse       'scheme-indent-function 1)
-(put 'syntax/loc         'scheme-indent-function 1)
-(put 'unit               'scheme-indent-function 'defun)
-(put 'unit/sig           'scheme-indent-function 2)
-(put 'unless             'scheme-indent-function 1)
-(put 'when               'scheme-indent-function 1)
-(put 'while              'scheme-indent-function 1)
-(put 'with-handlers      'scheme-indent-function 1)
-(put 'with-method        'scheme-indent-function 1)
-(put 'with-syntax        'scheme-indent-function 1)
+(put 'begin0               'scheme-indent-function 1)
+(put 'c-declare            'scheme-indent-function 0)
+(put 'c-lambda             'scheme-indent-function 2)
+(put 'case-lambda          'scheme-indent-function 0)
+(put 'catch                'scheme-indent-function 1)
+(put 'chicken-setup        'scheme-indent-function 1)
+(put 'class                'scheme-indent-function 'defun)
+(put 'class*               'scheme-indent-function 'defun)
+(put 'compound-unit/sig    'scheme-indent-function 0)
+(put 'defboolparam         'scheme-indent-function 2)
+(put 'defform              'scheme-indent-function 1)
+(put 'defform*             'scheme-indent-function 1)
+(put 'defform*/subs        'scheme-indent-function 2)
+(put 'defform/none         'scheme-indent-function 1)
+(put 'defform/subs         'scheme-indent-function 2)
+(put 'defidform            'scheme-indent-function 1)
+(put 'define-sequence-id   'scheme-indent-function 1)
+(put 'define:              'scheme-indent-function 3)
+(put 'defparam             'scheme-indent-function 3)
+(put 'defproc              'scheme-indent-function 2)
+(put 'defproc*             'scheme-indent-function 1)
+(put 'defstruct            'scheme-indent-function 2)
+(put 'defstruct*           'scheme-indent-function 2)
+(put 'defthing             'scheme-indent-function 2)
+(put 'deftogether          'scheme-indent-function 1)
+(put 'do                   'scheme-indent-function 2)
+(put 'dynamic-wind         'scheme-indent-function 0)
+(put 'filebox              'scheme-indent-function 1)
+(put 'for                  'scheme-indent-function 1)
+(put 'for*                 'scheme-indent-function 1)
+(put 'for*/and             'scheme-indent-function 1)
+(put 'for*/first           'scheme-indent-function 1)
+(put 'for*/fold            'scheme-indent-function 2)
+(put 'for*/fold/derived    'scheme-indent-function 3)
+(put 'for*/hash            'scheme-indent-function 1)
+(put 'for*/hasheq          'scheme-indent-function 1)
+(put 'for*/hasheqv         'scheme-indent-function 1)
+(put 'for*/last            'scheme-indent-function 1)
+(put 'for*/list            'scheme-indent-function 1)
+(put 'for*/lists           'scheme-indent-function 2)
+(put 'for*/or              'scheme-indent-function 1)
+(put 'for*/product         'scheme-indent-function 1)
+(put 'for*/sum             'scheme-indent-function 1)
+(put 'for*/vector          'scheme-indent-function 1)
+(put 'for*/vector          'scheme-indent-function 1)
+(put 'for/and              'scheme-indent-function 1)
+(put 'for/first            'scheme-indent-function 1)
+(put 'for/fold             'scheme-indent-function 2)
+(put 'for/fold             'scheme-indent-function 2)
+(put 'for/fold/derived     'scheme-indent-function 3)
+(put 'for/hash             'scheme-indent-function 1)
+(put 'for/hasheq           'scheme-indent-function 1)
+(put 'for/hasheqv          'scheme-indent-function 1)
+(put 'for/last             'scheme-indent-function 1)
+(put 'for/list             'scheme-indent-function 1)
+(put 'for/lists            'scheme-indent-function 2)
+(put 'for/or               'scheme-indent-function 1)
+(put 'for/product          'scheme-indent-function 1)
+(put 'for/sum              'scheme-indent-function 1)
+(put 'for/vector           'scheme-indent-function 1)
+(put 'instantiate          'scheme-indent-function 2)
+(put 'interface            'scheme-indent-function 1)
+(put 'lambda/kw            'scheme-indent-function 1)
+(put 'let*-values          'scheme-indent-function 1)
+(put 'let*:                'scheme-indent-function 'quack-let-colon-indent)
+(put 'let+                 'scheme-indent-function 1)
+(put 'let-values           'scheme-indent-function 1)
+(put 'let/ec               'scheme-indent-function 1)
+(put 'let:                 'scheme-indent-function 'quack-let-colon-indent)
+(put 'match                'scheme-indent-function 1)
+(put 'mixin                'scheme-indent-function 2)
+(put 'module               'scheme-indent-function 'defun)
+(put 'module               'scheme-indent-function 2)
+(put 'module*              'scheme-indent-function 2)
+(put 'module+              'scheme-indent-function 1)
+(put 'opt-lambda           'scheme-indent-function 1)
+(put 'parameterize         'scheme-indent-function 1)
+(put 'parameterize*        'scheme-indent-function 1)
+(put 'parameterize-break   'scheme-indent-function 1)
+(put 'quasisyntax/loc      'scheme-indent-function 1)
+(put 'receive              'scheme-indent-function 2)
+(put 'send*                'scheme-indent-function 1)
+(put 'sigaction            'scheme-indent-function 1)
+(put 'specform             'scheme-indent-function 1)
+(put 'specspecsubform      'scheme-indent-function 1)
+(put 'specspecsubform/subs 'scheme-indent-function 2)
+(put 'specsubform          'scheme-indent-function 1)
+(put 'specsubform/subs     'scheme-indent-function 2)
+(put 'struct               'scheme-indent-function 1)
+(put 'sxml-match           'scheme-indent-function 1)
+(put 'syntax-case          'scheme-indent-function 2)
+(put 'syntax-parse         'scheme-indent-function 1)
+(put 'syntax/loc           'scheme-indent-function 1)
+(put 'test-section         'scheme-indent-function 1)
+(put 'unit                 'scheme-indent-function 'defun)
+(put 'unit/sig             'scheme-indent-function 2)
+(put 'unless               'scheme-indent-function 1)
+(put 'when                 'scheme-indent-function 1)
+(put 'while                'scheme-indent-function 1)
+(put 'with-handlers        'scheme-indent-function 1)
+(put 'with-method          'scheme-indent-function 1)
+(put 'with-syntax          'scheme-indent-function 1)
 
 (defun quack-let-colon-indent (state indent-point normal-indent)
   ;; Note: This was adapted from "scheme.el" "scheme-let-indent".
@@ -3926,9 +3984,6 @@ Can be used in your `~/.emacs' file something like this:
                 ("^\;\;\; @subsection[ \t]+\\([^\r\n]*\\)"
                  (1 quack-threesemi-h2-face prepend))
 
-                ;; semiscribble:
-                ("^\;\;\; package +\"\\([^\r\n\"]*\\)\" *"
-                 (1 quack-threesemi-h1-face prepend))
                 ("^\;\;\; @section\\(?:\\[[^]]*\\]\\)?{\\([^\r\n]*\\)}"
                  (1 quack-threesemi-h1-face prepend))
                 ("^\;\;\; @subsection\\(?:\\[[^]]*\\]\\)?{\\([^\r\n]*\\)}"
