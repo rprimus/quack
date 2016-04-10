@@ -1,11 +1,11 @@
 ;;; quack.el --- enhanced support for editing and running Scheme code
 
-(defconst quack-copyright    "Copyright (C) 2002-2012 Neil Van Dyke")
+(defconst quack-copyright    "Copyright (C) 2002-2012, 2016 Neil Van Dyke")
 (defconst quack-copyright-2  "Portions Copyright (C) Free Software Foundation")
 ;; Emacs-style font-lock specs adapted from GNU Emacs 21.2 scheme.el.
 ;; Scheme Mode menu adapted from GNU Emacs 21.2 cmuscheme.el.
 
-(defconst quack-version      "0.47")
+(defconst quack-version      "0.48")
 (defconst quack-author-name  "Neil Van Dyke")
 (defconst quack-author-email "neil@neilvandyke.org")
 (defconst quack-web-page     "http://www.neilvandyke.org/quack/")
@@ -111,6 +111,9 @@ please contact Neil Van Dyke.")
 ;;     neil@neilvandyke.org to add you to the moderated `scheme-announce' list.
 
 ;; HISTORY:
+;;
+;;     Version 0.48 (2016-04-03):
+;;         * Made fontify `#true` and `#false`.
 ;;
 ;;     Version 0.47 (2012-11-15):
 ;;         * Added indent for `call-with-' file variants and semaphore.
@@ -3822,7 +3825,7 @@ Can be used in your `~/.emacs' file something like this:
     ("\\<#\\\\\\([][-`~!@#$%&*()_+=^{}\;:'\"<>,.?/|\\\\]\\|\\sw+\\>\\)"
      . quack-pltish-selfeval-face)
     ("[][()]"                   . quack-pltish-paren-face)
-    ("\\<#\\(t\\|f\\)\\>"       . quack-pltish-selfeval-face)
+    ("\\<#\\(t\\(?:rue\\)?\\|f\\(?:alse\\)?\\)\\>"       . quack-pltish-selfeval-face)
     ("\\<+\\(inf.0\\|nan\\)\\>" . quack-pltish-selfeval-face)
     ("\\<-inf.0\\>"             . quack-pltish-selfeval-face)
     ,@(mapcar (function (lambda (args)
